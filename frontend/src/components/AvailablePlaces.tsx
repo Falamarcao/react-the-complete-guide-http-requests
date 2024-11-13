@@ -1,24 +1,17 @@
 import { useEffect, useState } from 'react';
+
 import { Place } from '../models/Place.ts';
 
-import Places from './Places';
+import { PlacesService } from '../services/PlacesService.ts';
+
 import ErrorPage from './ErrorPage.tsx';
+import Places from './Places';
 
 interface AvailablePlacesProps {
   onSelectPlace: (place: Place) => void;
 }
 
-const fetchPlaces = async (): Promise<Place[]> => {
-  const response = await fetch('http://localhost:3000/places$'); // wrong url to trigger error
-
-  if (response.status === 200) {
-    return (await response.json()).places as Place[];
-  } else if (!response.ok) {
-    throw new Error('Failed to fetch places');
-  }
-
-  return [];
-};
+const placesService = new PlacesService();
 
 export default function AvailablePlaces({
   onSelectPlace,
@@ -28,7 +21,8 @@ export default function AvailablePlaces({
   const [errorMessage, setErrorMessage] = useState<string>('');
 
   useEffect(() => {
-    fetchPlaces()
+    placesService
+      .orderedByGeoLocation()
       .then((places: Place[]) => {
         setAvailablePlaces(places);
       })
