@@ -1,5 +1,5 @@
-import { Place } from '../models/Place';
-import { sortPlacesByDistance } from '../utils/loc';
+import { Place } from '../../models/Place';
+import { sortPlacesByDistance } from './loc';
 
 export class PlacesService {
   private baseUrl = 'http://localhost:3000/';

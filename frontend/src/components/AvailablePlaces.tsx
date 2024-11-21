@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 
 import { Place } from '../models/Place.ts';
 
-import { PlacesService } from '../services/PlacesService.ts';
+import { PlacesService } from '../services/PlacesService';
 
 import ErrorPage from './ErrorPage.tsx';
 import Places from './Places';

@@ -1,4 +1,4 @@
-import { Place } from '../models/Place';
+import { Place } from '../../models/Place';
 
 function toRad(value: number): number {
   return (value * Math.PI) / 180;
