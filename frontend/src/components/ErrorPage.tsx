@@ -1,6 +1,6 @@
 interface ErrorPageProps {
   title: string;
-  message: string;
+  message?: string;
   onConfirm?: () => void;
 }
 

@@ -3,8 +3,8 @@ import { Place } from '../models/Place';
 interface PlacesProps {
   title: string;
   places: Place[];
-  isLoading: boolean;
-  loadingText: string;
+  isLoading?: boolean;
+  loadingText?: string;
   fallbackText: string;
   onSelectPlace: (place: Place) => void;
 }
@@ -12,7 +12,7 @@ interface PlacesProps {
 export default function Places({
   title,
   places,
-  isLoading,
+  isLoading = false,
   loadingText,
   fallbackText,
   onSelectPlace,

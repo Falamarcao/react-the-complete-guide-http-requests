@@ -11,7 +11,7 @@ interface AvailablePlacesProps {
   onSelectPlace: (place: Place) => void;
 }
 
-const placesService = new PlacesService();
+const placesService = PlacesService.getInstance();
 
 export default function AvailablePlaces({
   onSelectPlace,
