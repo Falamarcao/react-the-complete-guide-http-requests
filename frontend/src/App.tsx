@@ -1,45 +1,32 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
 
 import logoImg from './assets/logo.png';
 
 import AvailablePlaces from './components/AvailablePlaces';
 import DeleteConfirmation from './components/DeleteConfirmation';
+import ErrorPage from './components/ErrorPage';
 import Modal from './components/Modal';
 import Places from './components/Places';
 
+import useFetch from './hooks/useFetch';
+
 import { Place } from './models/Place';
+
 import { PlacesService } from './services/PlacesService';
-import ErrorPage from './components/ErrorPage';
 
 const placesService = PlacesService.getInstance();
 
 function App() {
   const selectedPlace = useRef<Place>();
-
-  const [userPlaces, setUserPlaces] = useState<Place[]>([]);
-  const [isLoading, setIsLoading] = useState<boolean>(false);
-
-  const [placesServiceError, setPlacesServiceError] = useState<Error | null>();
-
   const [modalIsOpen, setModalIsOpen] = useState<boolean>(false);
 
-  useEffect(() => {
-    setIsLoading(true);
-    placesService
-      .getUserPlaces()
-      .then((userPlaces) => {
-        setUserPlaces(userPlaces);
-      })
-      .catch((error) => {
-        setPlacesServiceError({
-          name: 'GetUserPlacesError',
-          message: error.message,
-        });
-      })
-      .finally(() => {
-        setIsLoading(false);
-      });
-  }, []);
+  const {
+    isLoading,
+    errorState: placesServiceError,
+    setErrorState,
+    fetchedData: userPlaces,
+    setFetchedData: setUserPlaces,
+  } = useFetch<Place[]>(placesService.getUserPlaces, []);
 
   function handleStartRemovePlace(place: Place) {
     setModalIsOpen(true);
@@ -65,7 +52,7 @@ function App() {
       .updateUserPlaces([selectedPlace, ...userPlaces])
       .catch((error) => {
         setUserPlaces(userPlaces); // if exception -> rollback changes
-        setPlacesServiceError({
+        setErrorState({
           name: 'UpdateUserPlacesError',
           message: error.message,
         });
@@ -86,7 +73,7 @@ function App() {
         )
         .catch((error) => {
           setUserPlaces(userPlaces); // if exception -> rollback changes
-          setPlacesServiceError({
+          setErrorState({
             name: 'RemoveUserPlacesError',
             message: error.message,
           });
@@ -94,11 +81,11 @@ function App() {
 
       setModalIsOpen(false);
     },
-    [userPlaces]
+    [userPlaces, setUserPlaces, setErrorState]
   );
 
   const handleError = () => {
-    setPlacesServiceError(null);
+    setErrorState(null);
   };
 
   return (

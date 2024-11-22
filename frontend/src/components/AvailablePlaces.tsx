@@ -1,8 +1,8 @@
-import { useEffect, useState } from 'react';
-
 import { Place } from '../models/Place.ts';
 
 import { PlacesService } from '../services/PlacesService';
+
+import useFetch from '../hooks/useFetch.ts';
 
 import ErrorPage from './ErrorPage.tsx';
 import Places from './Places';
@@ -16,26 +16,14 @@ const placesService = PlacesService.getInstance();
 export default function AvailablePlaces({
   onSelectPlace,
 }: AvailablePlacesProps) {
-  const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [availablePlaces, setAvailablePlaces] = useState<Place[]>([]);
-  const [errorMessage, setErrorMessage] = useState<string>('');
+  const {
+    isLoading,
+    errorState,
+    fetchedData: availablePlaces,
+  } = useFetch<Place[]>(placesService.orderedByGeoLocation, []);
 
-  useEffect(() => {
-    placesService
-      .orderedByGeoLocation()
-      .then((places: Place[]) => {
-        setAvailablePlaces(places);
-      })
-      .catch((error) => {
-        setErrorMessage(error.message);
-      })
-      .finally(() => {
-        setIsLoading(false);
-      });
-  }, []);
-
-  if (errorMessage)
-    return <ErrorPage title="An error occured" message={errorMessage} />;
+  if (errorState)
+    return <ErrorPage title="An error occured" message={errorState.message} />;
 
   return (
     <Places
